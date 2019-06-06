@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: data.access
+---
+testFramework: junit
+sourceLanguage: java

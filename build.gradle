@@ -1,0 +1,162 @@
+plugins {
+    id "io.spring.dependency-management" version "1.0.6.RELEASE"
+    id "com.github.johnrengelman.shadow" version "4.0.2"
+    id "application"
+    id "java"
+    id "net.ltgt.apt-eclipse" version "0.21"
+    id "net.ltgt.apt-idea" version "0.21"
+    id "net.ltgt.apt" version "0.18"
+    id 'idea'
+
+}
+
+group 'cloudurable-kafka'
+version '1.0-SNAPSHOT'
+apply plugin: 'java'
+sourceCompatibility = 1.8
+
+
+version "0.1"
+group "data.access"
+
+apply plugin: 'war'
+apply plugin: 'jacoco'
+
+//plugins {
+//    id "net.ltgt.apt" version "0.18" // <1>
+//}
+
+repositories {
+    mavenCentral()
+    maven { url "https://jcenter.bintray.com" }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'io.micronaut:micronaut-bom:1.1.0'
+    }
+}
+
+configurations {
+    // for dependencies that are needed for development only
+    developmentOnly 
+}
+
+build.mustRunAfter clean
+
+dependencies {
+    //Junit 5
+//    testAnnotationProcessor "io.micronaut:micronaut-inject-java"
+//    testCompile "io.micronaut.test:micronaut-test-junit5:1.0.4"
+//    testCompile "org.mockito:mockito-junit-jupiter:2.22.0"
+//    testRuntime "org.junit.jupiter:junit-jupiter-engine:5.1.0"
+//    testCompile 'org.junit.jupiter:junit-jupiter-params:${junit.version}'
+    testImplementation('org.junit.jupiter:junit-jupiter:5.4.2')
+
+    annotationProcessor "io.micronaut.configuration:micronaut-openapi"
+    compile "io.swagger.core.v3:swagger-annotations"
+
+    annotationProcessor "io.micronaut:micronaut-inject-java"
+    annotationProcessor "io.micronaut:micronaut-validation"
+    compile "io.micronaut:micronaut-http-client"
+    compile "io.micronaut:micronaut-inject"
+    compile "io.micronaut:micronaut-validation"
+    compile "io.micronaut:micronaut-runtime"
+    compile "io.micronaut:micronaut-http-server-netty"
+    compile "javax.annotation:javax.annotation-api"
+
+    compile "com.stripe:stripe-java:9.12.0"
+    //compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+    compile 'org.json:json:20160212'
+    
+    //JUnit 5
+    testCompile 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    
+
+////   INVERSION OF CONTROL
+//    annotationProcessor "io.micronaut:micronaut-inject-java:1.1.2"
+//    compile "io.micronaut:micronaut-inject:1.1.2
+
+    //tag::validator[]
+    compile "io.micronaut.configuration:micronaut-hibernate-validator"
+    compile 'io.micronaut.configuration:micronaut-hibernate-jpa'
+    //end::validator[]
+
+    compile 'mysql:mysql-connector-java:8.0.16'
+
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    
+
+    //tag::mybatis[]
+    apply plugin: 'war'
+    compile 'org.apache.tomcat:tomcat-jdbc:7.0.35'
+
+    compile 'org.mybatis:mybatis:3.4.6' // <1>
+    runtime 'io.micronaut.configuration:micronaut-jdbc-tomcat'
+    compile 'org.apache.tomcat:tomcat-catalina:7.0.47'
+    runtime "com.h2database:h2:1.4.196" // <3>
+    //end::mybatis[]
+
+    //tag::flyway[]
+    compile 'io.micronaut.configuration:micronaut-flyway'
+    //end::flyway[]
+    
+    //kafka
+    compile 'org.apache.kafka:kafka-clients:2.2.0'
+    compile 'org.apache.kafka:kafka-clients:0.10.2.0'
+    compile 'ch.qos.logback:logback-classic:1.2.2'
+
+
+    //compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.14'
+    //compileOnly 'javax.servlet:javax.servlet-api:3.0.1'
+
+    runtime "ch.qos.logback:logback-classic:1.2.3"
+    runtime "com.h2database:h2"
+    testAnnotationProcessor "io.micronaut:micronaut-inject-java"
+    testCompile "org.junit.jupiter:junit-jupiter-api"
+    testCompile "io.micronaut.test:micronaut-test-junit5"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine"
+
+    //tag::securitydependency[]
+    compile "io.micronaut:micronaut-security-jwt"
+    //end::securitydependency[]
+    
+
+}
+
+jacocoTestReport {
+    afterEvaluate {
+        classDirectories.from = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: ['**/Application*', '**/NewCustomerContoller*', '**/AuthenticationProviderUserPassword*'])
+        })
+    }
+}
+
+test.classpath += configurations.developmentOnly
+
+mainClassName = "data.access.Application"
+
+// use JUnit 5 platform
+test {
+    testLogging {
+        events = ["passed", "failed", "skipped"]
+        showStandardStreams = true
+    }
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+
+shadowJar {
+    mergeServiceFiles()
+}
+
+run.classpath += configurations.developmentOnly
+run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')
+
+tasks.withType(JavaCompile){
+    options.encoding = "UTF-8"
+    options.compilerArgs.add('-parameters')
+}
