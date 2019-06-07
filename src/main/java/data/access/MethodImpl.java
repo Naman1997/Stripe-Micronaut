@@ -34,58 +34,51 @@ public class MethodImpl implements InterfaceForMethods{
         Map<String, Object> carrier = new HashMap<>();
 //        This is the Producer for the submit button
 
-        try{
-            UUID finger = UUID.randomUUID();
+        UUID finger = UUID.randomUUID();
 
-            //Assign topicName to string variable
-            String topicName = "naman";
+        //Assign topicName to string variable
+        String topicName = "naman";
 
-            // create instance for properties to access producer configs
-            Properties props = new Properties();
+        // create instance for properties to access producer configs
+        Properties props = new Properties();
 
-            //Assign localhost id
-            props.put("bootstrap.servers", "localhost:9092");
+        //Assign localhost id
+        props.put("bootstrap.servers", "localhost:9092");
 
-            //Set acknowledgements for producer requests.
-            props.put("acks", "all");
+        //Set acknowledgements for producer requests.
+        props.put("acks", "all");
 
-            //If the request fails, the producer can automatically retry,
-            props.put("retries", 0);
+        //If the request fails, the producer can automatically retry,
+        props.put("retries", 0);
 
-            //Specify buffer size in config
-            props.put("batch.size", 16384);
+        //Specify buffer size in config
+        props.put("batch.size", 16384);
 
-            //Reduce the no of requests less than 0
-            props.put("linger.ms", 1);
+        //Reduce the no of requests less than 0
+        props.put("linger.ms", 1);
 
-            //The buffer.memory controls he total amount of memory available to the producer for buffering.
-            props.put("buffer.memory", 33554432);
+        //The buffer.memory controls he total amount of memory available to the producer for buffering.
+        props.put("buffer.memory", 33554432);
 
-            props.put("key.serializer",
+        props.put("key.serializer",
                     "org.apache.kafka.common.serialization.StringSerializer");
 
-            props.put("value.serializer",
-                    "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("value.serializer",
+                "org.apache.kafka.common.serialization.StringSerializer");
 
-            Producer<String, String> producer = new KafkaProducer
-                    <String, String>(props);
+        Producer<String, String> producer = new KafkaProducer
+                <String, String>(props);
 
-            Map<String, String> hm = new HashMap<>();
-            hm.put("Response", finger.toString());
+        Map<String, String> hm = new HashMap<>();
+        hm.put("Response", finger.toString());
 
-            producer.send(new ProducerRecord<String, String>(topicName, finger.toString(), token));
-            producer.close();
+        producer.send(new ProducerRecord<String, String>(topicName, finger.toString(), token));
+        producer.close();
 
-            return HttpResponse.ok().body(hm);
+        return HttpResponse.ok().body(hm);
 
 
-        }
-        catch (Exception e){
 
-            System.out.println(e.getMessage());
-            return HttpResponse.serverError().body(e);
-
-        }
     }
 
     @Override

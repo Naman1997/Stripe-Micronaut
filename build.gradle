@@ -127,7 +127,7 @@ dependencies {
 jacocoTestReport {
     afterEvaluate {
         classDirectories.from = files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['**/Application*', '**/NewCustomerContoller*', '**/AuthenticationProviderUserPassword*'])
+            fileTree(dir: it, exclude: ['**/Application*', 'Contollers/**', '**/CustomerContoller*', '**/Contollers*', '**/AuthenticationProviderUserPassword*'])
         })
     }
 }

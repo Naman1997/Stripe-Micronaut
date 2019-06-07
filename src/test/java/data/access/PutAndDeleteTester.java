@@ -98,7 +98,7 @@ public class PutAndDeleteTester {
 
     @Autowired
     @ParameterizedTest
-    @CsvSource(value = {"ch_1Eif8dLQEw7LOW34cUKBRcux, Record deleted Successfully!!!!","ch_1EieKaLQEw7LOW34AzDQX7kM, Record deleted Successfully!!!!"}, delimiter = ',')
+    @CsvSource(value = {"ch_1EigmjLQEw7LOW34WgwQeYb2, Record deleted Successfully!!!!","ch_1EiglqLQEw7LOW34H1nrQaQC, Record deleted Successfully!!!!"}, delimiter = ',')
     public void delete_tester(String id, String expected) throws StripeException, SQLException, IOException, ParseException {
 
         //IMPORTANT

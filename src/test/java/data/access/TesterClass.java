@@ -264,6 +264,24 @@ public class TesterClass {
         );
     }
 
+    @Autowired
+    @ParameterizedTest
+    @CsvSource(value = {"Invalid_finger, Record NOT found!!!!"}, delimiter = ',')
+    public void brand_tester(String finger, String expected) throws IOException, ParseException {
+        System.out.println(finger);
+        System.out.println(expected);
+
+        ConnectionProperties connectionProperties = new ConnectionProperties();
+
+        Map<String, String> res = (Map<String, String>) interfaceForMethods.getter(finger, connectionProperties.poolmethod()).body();
+        System.out.println(res);
+        String result = res.get("status");
+
+        Assertions.assertEquals(
+                expected,
+                result
+        );
+    }
 
 
 }

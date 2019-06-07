@@ -42,9 +42,6 @@ public class KafkaConsumer implements Runnable {
             while (true) {
                 ConsumerRecords records = kafkaConsumer.poll(10);
                 for (Object record : records) {
-                    System.out.println("!!!!!!!!!!!!!!!!");
-                    System.out.println(String.format("Topic - %s, Partition - %d, Value: %s, Key: %s", ((ConsumerRecord) record).topic(), ((ConsumerRecord) record).partition(), ((ConsumerRecord) record).value(), ((ConsumerRecord) record).key()));
-                    System.out.println("!!!!!!!!!!!!!!!!");
 
                     String finger = (String) ((ConsumerRecord) record).key();
                     identity = finger;
@@ -102,18 +99,12 @@ public class KafkaConsumer implements Runnable {
                             pstmt.setString(10, "pending");
 
 
-                            int i = pstmt.executeUpdate();
-                            if (i > 0) {
-                                code = 200;
-                                value = "Record inserted successfully!";
-                                insertResponse(code, value, datasource);
-                                System.out.println("Record inserted successfully!");
-                            } else {
-                                code = 400;
-                                value = "Record NOT Inserted!!!!";
-                                failed_response(code, value);
-                                System.out.println("Consumer Record NOT Inserted!!!!");
-                            }
+                            pstmt.executeUpdate();
+
+                            code = 200;
+                            value = "Record inserted successfully!";
+                            insertResponse(code, value, datasource);
+
 
                         }else{
                             code = 400;
@@ -194,59 +185,46 @@ public class KafkaConsumer implements Runnable {
         Connection conn = null;
         PreparedStatement pstmtt = null;
 
-        try {
-            conn = (Connection) datasource.getConnection();
-            Statement st = conn.createStatement();
-            //Changing the database to 'work'
-            ResultSet rrs = st.executeQuery("use work");
+        conn = (Connection) datasource.getConnection();
+        Statement st = conn.createStatement();
+        //Changing the database to 'work'
+        ResultSet rrs = st.executeQuery("use work");
 
-            System.out.println(identity);
-            System.out.println(value);
-            System.out.println(code);
-            pstmtt=  (PreparedStatement) conn.prepareStatement("update charge set Code = ? , Status= ? where Finger= ?");
-            pstmtt.setString(1, String.valueOf(code));
-            pstmtt.setString(2, value);
-            pstmtt.setString(3, identity);
-            pstmtt.executeUpdate();
-        }
-        catch (Exception e){
-            System.out.println(e);
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        System.out.println(identity);
+        System.out.println(value);
+        System.out.println(code);
+        pstmtt=  (PreparedStatement) conn.prepareStatement("update charge set Code = ? , Status= ? where Finger= ?");
+        pstmtt.setString(1, String.valueOf(code));
+        pstmtt.setString(2, value);
+        pstmtt.setString(3, identity);
+        pstmtt.executeUpdate();
+
     }
 
-    public void failed_response(Integer code, String value) throws IOException, ParseException {
+    public void failed_response(Integer code, String value) throws IOException, ParseException, SQLException {
         Connection conn = null;
         PreparedStatement pstmtt = null;
 
         ConnectionProperties connectionProperties = new ConnectionProperties();
         DataSource datasource = connectionProperties.poolmethod();
 
-        try {
-            conn = (Connection) datasource.getConnection();
-            Statement st = conn.createStatement();
-            //Changing the database to 'work'
-            ResultSet rrs = st.executeQuery("use work");
-            System.out.println(value);
-            pstmtt=  (PreparedStatement) conn.prepareStatement("insert into charge values(?,?,?,?,?,?,?,?,?,?)");
-            pstmtt.setString(1, identity);
-            pstmtt.setString(2, null);
-            pstmtt.setString(3, null);
-            pstmtt.setString(4, null);
-            pstmtt.setString(5, null);
-            pstmtt.setString(6, null);
-            pstmtt.setString(7, null);
-            pstmtt.setString(8, null);
-            pstmtt.setString(9, String.valueOf(code));
-            pstmtt.setString(10, value);
-            pstmtt.executeUpdate();
-        }
-        catch (Exception e){
-            System.out.println(e);
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        conn = (Connection) datasource.getConnection();
+        Statement st = conn.createStatement();
+        //Changing the database to 'work'
+        ResultSet rrs = st.executeQuery("use work");
+        System.out.println(value);
+        pstmtt=  (PreparedStatement) conn.prepareStatement("insert into charge values(?,?,?,?,?,?,?,?,?,?)");
+        pstmtt.setString(1, identity);
+        pstmtt.setString(2, null);
+        pstmtt.setString(3, null);
+        pstmtt.setString(4, null);
+        pstmtt.setString(5, null);
+        pstmtt.setString(6, null);
+        pstmtt.setString(7, null);
+        pstmtt.setString(8, null);
+        pstmtt.setString(9, String.valueOf(code));
+        pstmtt.setString(10, value);
+        pstmtt.executeUpdate();
     }
 
 
