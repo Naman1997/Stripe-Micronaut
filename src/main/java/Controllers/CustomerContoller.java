@@ -16,6 +16,7 @@ import com.stripe.model.Refund;
 import io.micronaut.http.*;
 import io.micronaut.http.annotation.*;
 
+import io.micronaut.security.annotation.Secured;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.json.simple.parser.ParseException;
@@ -27,7 +28,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-//@Secured("isAuthenticated()")
+@Secured("isAuthenticated()")
 @Controller("/")
 public class CustomerContoller {
 

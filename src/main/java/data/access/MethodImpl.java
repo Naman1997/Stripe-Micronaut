@@ -30,7 +30,7 @@ public class MethodImpl implements InterfaceForMethods{
 
 
     @Override
-    public void poster(String token, DataSource datasource){
+    public HttpResponse poster(String token, DataSource datasource){
         Map<String, Object> carrier = new HashMap<>();
 //        This is the Producer for the submit button
 
@@ -74,14 +74,16 @@ public class MethodImpl implements InterfaceForMethods{
             hm.put("Response", finger.toString());
 
             producer.send(new ProducerRecord<String, String>(topicName, finger.toString(), token));
-            System.out.println("Message sent successfully");
             producer.close();
+
+            return HttpResponse.ok().body(hm);
 
 
         }
         catch (Exception e){
 
             System.out.println(e.getMessage());
+            return HttpResponse.serverError().body(e);
 
         }
     }
@@ -103,27 +105,21 @@ public class MethodImpl implements InterfaceForMethods{
             rs=pstmt.executeQuery();
             if(rs.next())
             {
-                String id =rs.getString("id");
-                String Amount =rs.getString("Amount");
-                String BalanceTransaction =rs.getString("BalanceTransaction");
-                String Invoice = rs.getString("Invoice");
-                String PaymentMethod = rs.getString("PaymentMethod");
-                String ReceiptNumber = rs.getString("ReceiptNumber");
-                String Currency = rs.getString("Currency");
+                String code =rs.getString("Code");
+                String status =rs.getString("Status");
 
-                carrier.put("id", id);
-                carrier.put("amount", Amount);
-                carrier.put("balance transaction", BalanceTransaction);
-                carrier.put("invoice", Invoice);
-                carrier.put("paymentnumber", PaymentMethod);
-                carrier.put("receiptnumber", ReceiptNumber);
-                carrier.put("currency", Currency);
+
+                carrier.put("code", code);
+                carrier.put("status", status);
 
                 return HttpResponse.ok().body(carrier);
             }
 
             else
-                return HttpResponse.badRequest().body("Record NOT found!!!!");
+                carrier.put("code", "404");
+                System.out.println(finger);
+                carrier.put("status", "Record NOT found!!!!");
+                return HttpResponse.badRequest().body(carrier);
 
         }
         catch(Exception e)
