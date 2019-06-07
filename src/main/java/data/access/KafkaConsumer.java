@@ -1,43 +1,35 @@
 package data.access;
 
+import Password_and_DB_access.ConnectionProperties;
 import com.stripe.exception.CardException;
-import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
-import io.micronaut.http.HttpResponse;
+import io.micronaut.validation.Validated;
 import org.apache.kafka.clients.consumer.*;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.common.serialization.LongDeserializer;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.tomcat.jdbc.pool.DataSource;
+import Password_and_DB_access.SecretAccess;
 
+import javax.inject.Singleton;
 import java.sql.*;
 import java.util.*;
 
-public class KafkaConsumerExample implements Runnable {
+@Singleton
+@Validated
+public class KafkaConsumer implements Runnable {
 
-//    final protected InterfaceForMethods interfaceForMethods;
-//    final protected ConnectionProperties connectionProperties;
-//    final protected SecretAccess secretAccess;
-//
-//    public KafkaConsumerExample(InterfaceForMethods interfaceForMethods, ConnectionProperties connectionProperties, SecretAccess secretAccess) throws SQLException, StripeException {
-//        this.interfaceForMethods = interfaceForMethods;
-//        this.connectionProperties = connectionProperties;
-//        this.secretAccess = secretAccess;
-//    }
+    private volatile String value;
+    private volatile int code;
 
-
-//    KafkaConsumerExample kafkaConsumerExample1 = new KafkaConsumerExample();
-//    Thread t1 = new Thread((kafkaConsumerExample1));
 
     @Override
     public void run() {
+
         Properties properties = new Properties();
         properties.put("bootstrap.servers", "localhost:9092");
         properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         properties.put("group.id", "test-group");
 
-        KafkaConsumer kafkaConsumer = new KafkaConsumer(properties);
+        org.apache.kafka.clients.consumer.KafkaConsumer kafkaConsumer = new org.apache.kafka.clients.consumer.KafkaConsumer(properties);
         List topics = new ArrayList();
         topics.add("naman");
         kafkaConsumer.subscribe(topics);
@@ -103,38 +95,47 @@ public class KafkaConsumerExample implements Runnable {
 
                             int i = pstmt.executeUpdate();
                             if (i > 0) {
+                                code = 200;
+                                value = "Record inserted successfully!";
                                 System.out.println("Record inserted successfully!");
-                            } else
+                            } else {
+                                code = 400;
+                                value = "Record NOT Inserted!!!!";
                                 System.out.println("Record NOT Inserted!!!!");
+                            }
 
                         }
 
 
                     } catch (CardException e) {
+                        code = 500;
                         // Since it's a decline, CardException will be caught
                         System.out.println("Status is: " + e.getDeclineCode());
                         System.out.println("Message is: " + e.getMessage());
-//                        if (e.getMessage().equals("Your card's security code is incorrect.; code: incorrect_cvc")) {
-//                            return HttpResponse.serverError().body("CvcCheck Failed");
-//                        } else if (e.getMessage().equals("Your card has expired.; code: expired_card")) {
-//                            return HttpResponse.serverError().body("Card Expired.");
-//                        } else if (e.getMessage().equals("An error occurred while processing your card. Try again in a little bit.; code: processing_error")) {
-//                            return HttpResponse.serverError().body("Processing Error.");
-//                        } else {
-//                            if (e.getDeclineCode().equals("insufficient_funds")) {
-//                                return HttpResponse.serverError().body("Your card has insufficient funds. Card declined.");
-//                            } else if (e.getDeclineCode().equals("lost_card")) {
-//                                return HttpResponse.serverError().body("This card has been marked as lost. Card declined.");
-//                            } else if (e.getDeclineCode().equals("stolen_card")) {
-//                                return HttpResponse.serverError().body("This card has been marked as stolen. Card declined.");
-//                            } else if (e.getDeclineCode().equals("fraudulent")) {
-//                                return HttpResponse.serverError().body("This card has been marked as fraudulent. Card declined.");
-//                            } else if (e.getDeclineCode().equals("generic_decline")) {
-//                                return HttpResponse.serverError().body("Your card was declined.");
-//                            } else {
-//                                return HttpResponse.serverError().body(e.getMessage());
-//                            }
-//                        }
+                        if (e.getMessage().equals("Your card's security code is incorrect.; code: incorrect_cvc")) {
+                            value = "CvcCheck Failed";
+                        } else if (e.getMessage().equals("Your card has expired.; code: expired_card")) {
+                            value = "Card Expired.";
+                        } else if (e.getMessage().equals("An error occurred while processing your card. Try again in a little bit.; code: processing_error")) {
+                            value = "Processing Error.";
+                        } else {
+                            if (e.getDeclineCode().equals("insufficient_funds")) {
+                                value = "Your card has insufficient funds. Card declined.";
+                            } else if (e.getDeclineCode().equals("lost_card")) {
+                                value = "This card has been marked as lost. Card declined.";
+                            } else if (e.getDeclineCode().equals("stolen_card")) {
+                                value = "This card has been marked as stolen. Card declined.";
+                            } else if (e.getDeclineCode().equals("fraudulent")) {
+                                value = "This card has been marked as fraudulent. Card declined.";
+                            } else if (e.getDeclineCode().equals("generic_decline")) {
+                                value = "Your card was declined.";
+                            } else {
+                                value = e.getMessage();
+                            }
+                        }
+                    }
+                    finally {
+
                     }
                 }
             }
@@ -145,4 +146,17 @@ public class KafkaConsumerExample implements Runnable {
         }
 
     }
+
+
+    public Map<String, String> getValue(){
+        Map<String, String> carrier = new HashMap<String, String>();
+        carrier.put("Response", value);
+        carrier.put("Code", String.valueOf(code));
+        return carrier;
+    }
+
+//    public HttpResponse valuesetter(){
+//
+//    }
+
 }

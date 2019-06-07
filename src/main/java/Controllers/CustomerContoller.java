@@ -1,10 +1,10 @@
-package data.access;
+package Controllers;
 
 
+import Password_and_DB_access.ConnectionProperties;
+import data.access.InterfaceForMethods;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.security.annotation.Secured;
-import java.security.Principal;
 
 
 import com.stripe.Stripe;
@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import Password_and_DB_access.SecretAccess;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -28,13 +29,13 @@ import java.util.Map;
 
 //@Secured("isAuthenticated()")
 @Controller("/")
-public class NewCustomerContoller {
+public class CustomerContoller {
 
     final protected InterfaceForMethods interfaceForMethods;
     final protected ConnectionProperties connectionProperties;
     final protected SecretAccess secretAccess;
 
-    public NewCustomerContoller(InterfaceForMethods interfaceForMethods, ConnectionProperties connectionProperties, SecretAccess secretAccess) {
+    public CustomerContoller(InterfaceForMethods interfaceForMethods, ConnectionProperties connectionProperties, SecretAccess secretAccess) {
         this.interfaceForMethods = interfaceForMethods;
         this.connectionProperties = connectionProperties;
         this.secretAccess = secretAccess;
@@ -68,22 +69,29 @@ public class NewCustomerContoller {
     @Autowired
     public HttpResponse charge(@Body Map<String, String> hm) throws CardException, IOException, ParseException {
 
-        //Gets stripe apiKey value
-        Stripe.apiKey = secretAccess.secrets().get("StripeKey");
+        try{
+            //Gets stripe apiKey value
+            Stripe.apiKey = secretAccess.secrets().get("StripeKey");
 
-        // Token is created using Checkout or Elements !
-        // Get the payment token ID submitted by the form:
-        //Token value is embedded in the POST method body from index.html
-        String token = hm.get("tokendata");
+            // Token is created using Checkout or Elements !
+            // Get the payment token ID submitted by the form:
+            //Token value is embedded in the POST method body from index.html
+            String token = hm.get("tokendata");
+            System.out.println(token);
 
-        //Generates the connection properties to create the connection to the database.
-        ConnectionProperties connectionProperties = new ConnectionProperties();
-        DataSource datasource = connectionProperties.poolmethod();
+            //Generates the connection properties to create the connection to the database.
+            ConnectionProperties connectionProperties = new ConnectionProperties();
+            DataSource datasource = connectionProperties.poolmethod();
+            System.out.println("going in");
+            //POST method in interface as poster
+            interfaceForMethods.poster(token, datasource);
+            System.out.println("done");
 
-        //POST method in interface as poster
-        HttpResponse result = interfaceForMethods.poster(token, datasource);
-
-        return result;
+            return HttpResponse.ok().body("Token in queue");
+        }
+        catch (Exception e){
+            return HttpResponse.serverError().body(e.getMessage());
+        }
 
     }
 

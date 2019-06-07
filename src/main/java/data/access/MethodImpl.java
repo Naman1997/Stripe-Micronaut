@@ -25,13 +25,14 @@ import java.util.UUID;
 
 @Singleton
 @Validated
-public class MethodImpl implements InterfaceForMethods {
+public class MethodImpl implements InterfaceForMethods{
 
 
 
     @Override
-    public HttpResponse poster(String token, DataSource datasource){
+    public void poster(String token, DataSource datasource){
         Map<String, Object> carrier = new HashMap<>();
+//        This is the Producer for the submit button
 
         try{
             UUID finger = UUID.randomUUID();
@@ -77,12 +78,11 @@ public class MethodImpl implements InterfaceForMethods {
             producer.close();
 
 
-
-            return HttpResponse.ok().body(finger);
-
         }
         catch (Exception e){
-            return HttpResponse.badRequest().body(e.getMessage());
+
+            System.out.println(e.getMessage());
+
         }
     }
 

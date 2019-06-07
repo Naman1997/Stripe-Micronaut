@@ -18,7 +18,7 @@ public interface InterfaceForMethods {
 
     HttpResponse tokencreator(String cardNum) throws StripeException;
 
-    HttpResponse poster(String token, DataSource dataSource);
+    void poster(String token, DataSource dataSource);
 
     HttpResponse putter(Map<String, String> hm, DataSource datasource) throws StripeException;
 

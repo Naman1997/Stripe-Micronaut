@@ -1,9 +1,10 @@
-package data.access;
+package Password_and_DB_access;
 
 import io.micronaut.validation.Validated;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.json.simple.parser.ParseException;
+import Password_and_DB_access.SecretAccess;
 
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.io.IOException;
 public class ConnectionProperties {
 
     //Go to https://tomcat.apache.org/tomcat-9.0-doc/jdbc-pool.html#Plain_Ol'_Java for more documentation.
-    protected DataSource poolmethod() throws IOException, ParseException {
+    public DataSource poolmethod() throws IOException, ParseException {
 
         SecretAccess secretAccess = new SecretAccess();
 

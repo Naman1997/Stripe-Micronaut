@@ -1,19 +1,16 @@
-package data.access;
+package Controllers;
 
 
 import com.stripe.model.Token;
+import Password_and_DB_access.ConnectionProperties;
+import data.access.InterfaceForMethods;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.security.annotation.Secured;
-import java.security.Principal;
 
 
 import com.stripe.Stripe;
-import com.stripe.exception.CardException;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Charge;
 
-import com.stripe.model.Refund;
 import io.micronaut.http.*;
 import io.micronaut.http.annotation.*;
 
@@ -24,24 +21,14 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import Password_and_DB_access.SecretAccess;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
 
 import java.util.UUID;
-import org.apache.kafka.clients.consumer.*;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.common.serialization.LongDeserializer;
-import org.apache.kafka.common.serialization.StringDeserializer;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
 
 
 @Controller("/test")
@@ -76,9 +63,9 @@ public class TestController {
         DataSource datasource = connectionProperties.poolmethod();
 
         //POST method in interface as poster
-        HttpResponse result = interfaceForMethods.poster(token, datasource);
+        interfaceForMethods.poster(token, datasource);
 
-        return result;
+        return HttpResponse.ok();
 
     }
 
