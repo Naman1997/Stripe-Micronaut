@@ -54,6 +54,9 @@ public class TesterClass {
         String result = res.get("status");
 
         System.out.println(result);
+
+        kafkaConsumerExample1.end();
+
         Assertions.assertEquals(
                 expected,
                 result
@@ -105,6 +108,7 @@ public class TesterClass {
         System.out.println(res);
         System.out.println(result);
 
+        kafkaConsumerExample1.end();
 
         Assertions.assertEquals(
                 expected,
@@ -156,6 +160,7 @@ public class TesterClass {
         System.out.println(res);
         System.out.println(result);
 
+        kafkaConsumerExample1.end();
 
         Assertions.assertEquals(
                 expected,
@@ -206,6 +211,7 @@ public class TesterClass {
         System.out.println(res);
         System.out.println(result);
 
+        kafkaConsumerExample1.end();
 
         Assertions.assertEquals(
                 expected,
@@ -257,6 +263,7 @@ public class TesterClass {
         System.out.println(res);
         System.out.println(result);
 
+        kafkaConsumerExample1.end();
 
         Assertions.assertEquals(
                 expected,

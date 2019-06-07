@@ -20,6 +20,7 @@ public class KafkaConsumer implements Runnable {
     private volatile String value;
     private volatile String identity;
     private volatile int code;
+    private volatile boolean exit = false;
 
 
 
@@ -39,7 +40,7 @@ public class KafkaConsumer implements Runnable {
         topics.add("naman");
         kafkaConsumer.subscribe(topics);
         try {
-            while (true) {
+            while (!exit) {
                 ConsumerRecords records = kafkaConsumer.poll(10);
                 for (Object record : records) {
 
@@ -167,6 +168,7 @@ public class KafkaConsumer implements Runnable {
                             }
                         }
                     } catch (Exception e){
+                        code = 500;
                         value = e.getMessage();
                         failed_response(code, value);
                     }
@@ -225,6 +227,10 @@ public class KafkaConsumer implements Runnable {
         pstmtt.setString(9, String.valueOf(code));
         pstmtt.setString(10, value);
         pstmtt.executeUpdate();
+    }
+
+    public void end(){
+        exit = true;
     }
 
 

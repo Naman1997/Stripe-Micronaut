@@ -71,6 +71,7 @@ public class BrandTester {
         String result = res.get("status");
 
         System.out.println(res);
+        kafkaConsumerExample1.end();
 
 
         Assertions.assertEquals(
