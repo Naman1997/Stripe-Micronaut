@@ -248,7 +248,7 @@ public class KafkaConsumer implements Runnable {
             e.printStackTrace();
         }
     }
-    
+
 
 
 }
