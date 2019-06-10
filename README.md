@@ -13,7 +13,7 @@ This project is a payment microservice designed to work alongside with Stripe AP
 
 2. Security implemented with JWT is initially disabled for this project. You can enable it by uncommenting the secure section in the [application.yml](https://github.com/Naman1997/Micronaut-final/blob/master/src/main/resources/application.yml) file.
 
-3. You also need to edit the 'secret.json' file that contains the following:
+3. You also need to edit the ['secret.json'](https://github.com/Naman1997/Micronaut-final/blob/master/src/main/java/Password_and_DB_access/secret.json) file that contains the following:
   - Your Stripe key under 'StripeKey'
   - Your mysql username and password under 'username' and 'password'
   - Your JWT(Works only if you follow step 2) login id and password under 'loginuser' and 'loginpass'
