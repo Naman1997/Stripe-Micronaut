@@ -11,12 +11,14 @@ This project is a payment microservice designed to work alongside with Stripe AP
 # Initial Configuration
 1. Create a mysql database named 'work' and create 2 tables named charge and refund whose structure is defined in a file named setup.sql.
 
-2. Security implemented with JWT is initially disabled for this project. You can eanble it by uncommenting the secure section in the application.yml file.
+2. Security implemented with JWT is initially disabled for this project. You can enable it by uncommenting the secure section in the application.yml file.
 
 3. You also need to edit the 'secret.json' file that contains the following:
   - Your Stripe key under 'StripeKey'
   - Your mysql username and password under 'username' and 'password'
   - Your JWT(Works only if you follow step 2) login id and password under 'loginuser' and 'loginpass'
+  
+4. Start the [zookeeper](https://kafka.apache.org/quickstart) and the [server](https://kafka.apache.org/quickstart) for using the POST method(submit button) that uses kafka.
 
 # Frontend
 The server hosts a HTML file that is responsible for getting the data from the user, generating a token and sending the token and other data in the request body to the backend.
