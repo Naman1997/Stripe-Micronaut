@@ -22,8 +22,9 @@ This project is a payment microservice designed to work alongside with Stripe AP
 
 # Frontend
 The server hosts a HTML file that is responsible for getting the data from the user, generating a token and sending the token and other data in the request body to the backend.
-The UI in this project is made using Stripe Elements.
+The UI in this project is made using [Stripe Elements](https://stripe.com/payments/elements).
 ![frontend.png](https://www.dropbox.com/s/i2jf31ao5s49bes/frontend.png?dl=0&raw=1)
+
 Sensitive data is not sent to the backend and is rather processed by Stripe.js which then generates the token mentioned above. The token can then be used to create charges and if required, refunds.
 
 # Endpoints
