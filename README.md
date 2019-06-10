@@ -11,7 +11,7 @@ This project is a payment microservice designed to work alongside with Stripe AP
 # Initial Configuration
 1. Create a mysql database named 'work' and create 2 tables named charge and refund whose structure is defined in a file named [setup.sql](https://github.com/Naman1997/Micronaut-final/blob/master/setup.sql).
 
-2. Security implemented with JWT is initially disabled for this project. You can enable it by uncommenting the secure section in the application.yml file.
+2. Security implemented with JWT is initially disabled for this project. You can enable it by uncommenting the secure section in the [application.yml](https://github.com/Naman1997/Micronaut-final/blob/master/src/main/resources/application.yml) file.
 
 3. You also need to edit the 'secret.json' file that contains the following:
   - Your Stripe key under 'StripeKey'
